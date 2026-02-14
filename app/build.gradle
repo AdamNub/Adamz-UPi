@@ -11,7 +11,7 @@ android {
         minSdk 21
         targetSdk 33
         versionCode 1
-        versionName "1.0.0"  // This is your library version
+        versionName "1.0.0"
     }
     
     buildTypes {
@@ -41,7 +41,6 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.1'
 }
 
-// Add this AFTER the android block
 publishing {
     publications {
         release(MavenPublication) {
