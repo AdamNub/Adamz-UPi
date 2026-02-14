@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
 
 android {
@@ -10,30 +11,47 @@ android {
         minSdk 21
         targetSdk 33
         versionCode 1
-        versionName "1.0"
-        
-        vectorDrawables { 
-            useSupportLibrary true
-        }
+        versionName "1.0.0"  // This is your library version
     }
-
+    
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+    
+    // Add this for JitPack
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
-    
-    // Add QR code generation
     implementation 'com.google.zxing:core:3.5.1'
+}
+
+// Add this AFTER the android block
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.AdamNub'
+            artifactId = 'UPI-PAYMENT-INTEGRATION-IN-ANDROID'
+            version = '1.0.0'
+            
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
 }
