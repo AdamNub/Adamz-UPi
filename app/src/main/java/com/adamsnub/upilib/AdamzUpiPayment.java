@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
+import com.adamsnub.upilib.detector.UpiAppDetector;
 import com.adamsnub.upilib.exception.AppNotFoundException;
 import com.adamsnub.upilib.launcher.PaymentStatusListener;
 import com.adamsnub.upilib.models.PaymentRequest;
@@ -40,6 +41,18 @@ public class AdamzUpiPayment {
     }
 
     public void startPayment() {
+        // ✅ FIX: Check if any UPI apps exist before launching
+        UpiAppDetector detector = new UpiAppDetector(activity);
+        
+        if (!detector.hasAnyUpiApp()) {
+            Log.d(TAG, "No UPI apps found - triggering onAppNotFound");
+            if (Singleton.getListener() != null) {
+                Singleton.getListener().onAppNotFound();
+            }
+            return; // Don't launch PaymentActivity
+        }
+        
+        // UPI apps exist, proceed normally
         Intent intent = new Intent(activity, PaymentActivity.class);
         intent.putExtra("payment_request", paymentRequest);
         activity.startActivity(intent);
@@ -123,12 +136,10 @@ public class AdamzUpiPayment {
                     .setCurrency(currency)
                     .build();
             
-            // Set target package in request if specified
             if (targetPackage != null && !targetPackage.isEmpty()) {
                 if (!isPackageInstalled(targetPackage)) {
                     throw new AppNotFoundException("App not installed: " + targetPackage);
                 }
-                // You might want to store this in PaymentRequest or handle separately
             }
             
             return new AdamzUpiPayment(activity, request);
