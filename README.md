@@ -35,9 +35,8 @@ Step 2: Add Dependency
 📁 app/build.gradle
 
 ```gradle
-dependencies {
-    implementation 'com.github.AdamNub:UPI-PAYMENT-INTEGRATION-IN-ANDROID:1.0.0'
-}
+dependencies
+    'com.github.AdamNub:Adamz-UPI:1.0.6' 
 ```
 
 Step 3: Sync Project
