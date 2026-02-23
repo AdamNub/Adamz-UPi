@@ -15,9 +15,9 @@ public class UpiIntentBuilder {
                 .appendQueryParameter("pn", request.getPayeeName())
                 .appendQueryParameter("am", request.getAmount())
                 .appendQueryParameter("tr", request.getTransactionRef())
-                .appendQueryParameter("cu", request.getCurrency());
-                // .appendQueryParameter("mode", "04")     // ← Good - commented out
-                // .appendQueryParameter("purpose", "00"); // ← Good - commented out
+                .appendQueryParameter("cu", request.getCurrency())
+                // 🔥 FIX: Add mode=05 for secure intent (NOT QR)
+                .appendQueryParameter("mode", "05");
         
         if (request.getTransactionNote() != null && !request.getTransactionNote().isEmpty()) {
             builder.appendQueryParameter("tn", request.getTransactionNote());
@@ -35,8 +35,6 @@ public class UpiIntentBuilder {
         if (targetPackage != null && !targetPackage.isEmpty()) {
             intent.setPackage(targetPackage);
         }
-        //Removed flag causing error in payment on phonepe
-        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
     
