@@ -139,6 +139,9 @@ public class PaymentActivity extends AppCompatActivity {
 
         if (requestCode == UPI_PAYMENT_REQUEST) {
             PaymentStatusListener listener = Singleton.getListener();
+            
+            // Hide progress bar
+            progressBar.setVisibility(android.view.View.GONE);
 
             if (resultCode == Activity.RESULT_OK && data != null) {
                 String response = data.getStringExtra("response");
@@ -149,20 +152,25 @@ public class PaymentActivity extends AppCompatActivity {
                 }
                 tvResult.setText("Payment completed!");
                 qrLayout.setVisibility(android.view.View.GONE);
-            } else {
-                // Intent payment failed - show QR fallback
-                showQrFallback();
-            }
-            progressBar.setVisibility(android.view.View.GONE);
-            
-            // Close after 1 second if payment successful
-            if (resultCode == Activity.RESULT_OK && data != null) {
+                
+                // Close after 1 second on success
                 new android.os.Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         finish();
                     }
                 }, 1000);
+                
+            } else {
+                // Payment failed or was cancelled
+                if (listener != null) {
+                    listener.onTransactionCancelled();
+                }
+                tvResult.setText("Payment failed or cancelled");
+                
+                // Show QR as fallback option
+                qrLayout.setVisibility(android.view.View.VISIBLE);
+                tvQrInstruction.setText("Try scanning QR code instead");
             }
         }
     }
