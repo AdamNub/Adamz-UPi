@@ -399,3 +399,9 @@ Reporting Issues
 <div align="center">
 
 ⭐ Found this helpful? Star the repo! ⭐
+
+
+## ⚠️ ARCHIVED
+
+This library has been archived due to NPCI security changes (2026). The QR code fallback still works for testing.
+
