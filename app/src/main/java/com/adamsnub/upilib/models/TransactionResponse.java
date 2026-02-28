@@ -11,12 +11,12 @@ public class TransactionResponse {
     // Status constants
     public static final String STATUS_SUCCESS = "SUCCESS";
     public static final String STATUS_FAILURE = "FAILURE";
-    public static final String STATUS_SUBMITTED = "SUBMITTED";
+    public static final String STATUS_SUBMITTED = "SUBMITTED"; // Pending
     public static final String STATUS_CANCELLED = "CANCELLED";
 
-    public TransactionResponse() {
-    }
+    public TransactionResponse() {}
 
+    // Getters and setters for all fields
     public String getTransactionId() {
         return transactionId;
     }
@@ -65,6 +65,7 @@ public class TransactionResponse {
         this.rawResponse = rawResponse;
     }
 
+    // Helper methods to check status
     public boolean isSuccess() {
         return STATUS_SUCCESS.equals(status);
     }
@@ -75,5 +76,9 @@ public class TransactionResponse {
 
     public boolean isCancelled() {
         return STATUS_CANCELLED.equals(status);
+    }
+
+    public boolean isSubmitted() {
+        return STATUS_SUBMITTED.equals(status);
     }
 }

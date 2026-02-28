@@ -19,6 +19,7 @@ import com.adamsnub.upilib.Singleton;
 import com.adamsnub.upilib.detector.UpiAppDetector;
 import com.adamsnub.upilib.launcher.PaymentStatusListener;
 import com.adamsnub.upilib.models.PaymentRequest;
+import com.adamsnub.upilib.models.TransactionResponse;
 import com.adamsnub.upilib.models.UpiApp;
 import com.adamsnub.upilib.parser.UpiResponseParser;
 import com.adamsnub.upilib.utils.UpiIntentBuilder;
@@ -145,15 +146,23 @@ public class PaymentActivity extends AppCompatActivity {
 
             if (resultCode == Activity.RESULT_OK && data != null) {
                 String response = data.getStringExtra("response");
-                if (listener != null) {
-                    listener.onTransactionCompleted(
-                            UpiResponseParser.parse(response)
-                    );
-                }
-                tvResult.setText("Payment completed!");
-                qrLayout.setVisibility(android.view.View.GONE);
+                TransactionResponse transactionResponse = UpiResponseParser.parse(response);
                 
-                // Close after 1 second on success
+                if (listener != null) {
+                    if (transactionResponse.isSuccess()) {
+                        listener.onTransactionCompleted(transactionResponse);
+                        tvResult.setText("Payment completed!");
+                        qrLayout.setVisibility(android.view.View.GONE);
+                    } else if (transactionResponse.isFailure()) {
+                        listener.onTransactionCancelled();
+                        tvResult.setText("Payment failed. Please check your PIN.");
+                    } else if (transactionResponse.isSubmitted()) {
+                        listener.onTransactionCancelled();
+                        tvResult.setText("Payment pending. Check transaction status.");
+                    }
+                }
+                
+                // Close after 1 second
                 new android.os.Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
